@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>PagerDuty AngularApp</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.4/angular.js"></script>
+    <script src="http://code.angularjs.org/1.2.4/angular-route.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/restangular/1.2.0/restangular.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
+    <script src="app.js"></script>
+  </head>
+  <body>
+    <div ng-app="incidents">
+      <h2>PagerDuty incidents viewer</h2>
+      <div ng-view></div>
+      <script type="text/ng-template" id="list.html">
+        <div class="input-append">
+          <form novalidate class="simple-form">
+            <input type="text" ng-model="no_pages" class="span2" placeholder="Number of pages X100">
+            <button ng-click="update(no_pages)" class="btn">Set</button>
+          </form>
+          <input type="text" ng-model="search" class="span2" placeholder="Search">
+            <button type="button" ng-repeat="state in states" class="btn btn-default" btn-checkbox
+              ng-model="selected[state]"
+              ng-class="{active: state == selectedState}"
+              ng-click="setSelectedState(state)">
+              {{state}}
+            </button>
+        </div>
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Id</th>
+              <th>State</th>
+              <th>service</th>
+              <th>Resolve</th>
+              <th>Acknowledge</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="incident in incidents | filter:search | filter:byState | orderBy:'-incident_number'" ng-show="incident.incident_number" ng-class="{'error': incident.status === 'triggered'}">
+              <td><a href="{{incident.html_url}}" target="_blank">{{incident.incident_number}}</a></td>
+              <td>{{incident.status}}</td>
+              <td>{{incident.incident_key}}</td>
+              <td><a href="#/edit/{{incident.id}}"><i class="icon-thumbs-up"></i></a></td>
+              <td><a href="#/edit/{{incident.id}}"><i class="icon-ok"></i></a></td>
+            </tr>
+          </tbody>
+        </table>
+      </script>
+    </div>
+  </body>
+</html>
