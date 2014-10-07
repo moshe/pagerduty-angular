@@ -39,7 +39,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr ng-repeat="incident in incidents | filter:search | filter:byState | orderBy:'-incident_number'" ng-show="incident.incident_number" ng-class="{'error': incident.status === 'triggered'}">
+            <tr ng-repeat="incident in incidents | filter:search | filter:byState | offset: currentPage*itemsPerPage | limitTo: itemsPerPage | orderBy:'-incident_number'" ng-show="incident.incident_number" ng-class="{'error': incident.status === 'triggered'}">
               <td><a href="{{incident.html_url}}" target="_blank">{{incident.incident_number}}</a></td>
               <td>{{incident.status}}</td>
               <td>{{incident.incident_key}}</td>
@@ -48,6 +48,21 @@
             </tr>
           </tbody>
         </table>
+          <td colspan="3">
+            <div class="pagination">
+              <ul>
+                <li ng-class="prevPageDisabled()">
+                  <a href ng-click="setPage(currentPage-1)">« Prev</a>
+                </li>
+                <li ng-repeat="n in range()" ng-class="{active: n == currentPage}">
+                  <a href ng-click="setPage(n)">{{n}}</a>
+                </li>
+                <li ng-class="nextPageDisabled()">
+                  <a href ng-click="setPage(currentPage+1)">Next »</a>
+                </li>
+              </ul>
+            </div>
+          </td>
       </script>
     </div>
   </body>
