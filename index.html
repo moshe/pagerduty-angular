@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <title>PagerDuty AngularApp</title>
     <meta charset="utf-8" />
-    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" src="style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.4/angular.js"></script>
     <script src="http://code.angularjs.org/1.2.4/angular-route.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/restangular/1.2.0/restangular.min.js"></script>
@@ -12,58 +14,106 @@
   </head>
   <body>
     <div ng-app="incidents">
-      <h2>PagerDuty incidents viewer</h2>
+        <p class="text-right">
+<button type="button" class="btn btn-lg btn-link" data-toggle="modal" data-target="#settings">
+  <span class="glyphicon glyphicon-cog"></span> Settings
+</button>
+        </p>
+      <div class="page-header">
+        <h2>PagerDuty incidents viewer</h2>
+      </div>
       <div ng-view></div>
       <script type="text/ng-template" id="list.html">
-        <div class="input-append">
-          <form novalidate class="simple-form">
-            <input type="text" ng-model="no_pages" class="span2" placeholder="Number of pages X100">
-            <button ng-click="update(no_pages)" class="btn">Set</button>
-          </form>
-          <input type="text" ng-model="search" class="span2" placeholder="Search">
-            <button type="button" ng-repeat="state in states" class="btn btn-default" btn-checkbox
-              ng-model="selected[state]"
-              ng-class="{active: state == selectedState}"
-              ng-click="setSelectedState(state)">
-              {{state}}
-            </button>
-        </div>
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th>Id</th>
-              <th>State</th>
-              <th>service</th>
-              <th>Resolve</th>
-              <th>Acknowledge</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr ng-repeat="incident in incidents | filter:search | filter:byState | offset: currentPage*itemsPerPage | limitTo: itemsPerPage | orderBy:'-incident_number'" ng-show="incident.incident_number" ng-class="{'error': incident.status === 'triggered'}">
-              <td><a href="{{incident.html_url}}" target="_blank">{{incident.incident_number}}</a></td>
-              <td>{{incident.status}}</td>
-              <td>{{incident.incident_key}}</td>
-              <td><i class="icon-thumbs-up"></a></td>
-              <td><i class="icon-ok"></i></td>
-            </tr>
-          </tbody>
-        </table>
-          <td colspan="3">
-            <div class="pagination">
-              <ul>
-                <li ng-class="prevPageDisabled()">
-                  <a href ng-click="setPage(currentPage-1)">« Prev</a>
-                </li>
-                <li ng-repeat="n in range()" ng-class="{active: n == currentPage}">
-                  <a href ng-click="setPage(n)">{{n}}</a>
-                </li>
-                <li ng-class="nextPageDisabled()">
-                  <a href ng-click="setPage(currentPage+1)">Next »</a>
-                </li>
-              </ul>
+        <div class="container-fluid">
+          <div class="row-fluid">
+            <div class="col-xs-4">
+              <div class="input-group">
+                <input type="text" ng-model="search" class="form-control" placeholder="Search">
+                  <span class="input-group-btn">
+                    <button type="button" ng-repeat="state in states" class="btn btn-default" btn-checkbox
+                      ng-model="selected[state]"
+                      ng-class="{active: state == selectedState, 'btn-success': state === 'resolved', 'btn-danger': state === 'triggered', 'btn-warning': state === 'acknowledged'}"
+                      ng-click="setSelectedState(state)">
+                      {{state}}
+                    </button>
+                  </span>
+              </div>
             </div>
-          </td>
+            <div class="span4 offset2">
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th>Id</th>
+                    <th>State</th>
+                    <th>service</th>
+                    <th>Resolve</th>
+                    <th>Acknowledge</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="incident in incidents | filter:search | filter:byState | offset: currentPage*itemsPerPage | limitTo: itemsPerPage | orderBy:'-incident_number'" ng-show="incident.incident_number" 
+                    ng-class="{'danger': incident.status === 'triggered', 'success': incident.status === 'resolved', 'warning': incident.status === 'acknowledged'}">
+                    <td><a href="{{incident.html_url}}" target="_blank">{{incident.incident_number}}</a></td>
+                    <td>{{incident.status}}</td>
+                    <td>{{incident.incident_key}}</td>
+                    <td><span class="glyphicon glyphicon-thumbs-up"></span></td>
+                    <td><span class="glyphicon glyphicon-ok"></span></td>
+                  </tr>
+                </tbody>
+              </table>
+              <td colspan="3">
+                <ul class="pagination">
+                  <li ng-class="prevPageDisabled()">
+                    <a href ng-click="setPage(currentPage-1)">« Prev</a>
+                  </li>
+                  <li ng-repeat="n in range()" ng-class="{active: n == currentPage}">
+                    <a href ng-click="setPage(n)">{{n}}</a>
+                  </li>
+                  <li ng-class="nextPageDisabled()">
+                    <a href ng-click="setPage(currentPage+1)">Next »</a>
+                  </li>
+                </ul>
+              </td>
+            </div>
+            <!-- Modal -->
+            <div class="modal fade" id="settings" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+              <div class="col-sm-4 col-sm-offset-4 text-center">
+                <h1>Settings</h1>
+                <form class="form-horizontal" role="form">
+                  <div class="form-group">
+                    <label for="input_no_pages" class="col-sm-2 control-label">Number of pages to fetch</label>
+                    <div class="col-sm-10">
+                      <input type="text" class="form-control" ng-model="no_pages" placeholder="integer">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="inputPassword3" class="col-sm-2 control-label">Password</label>
+                    <div class="col-sm-10">
+                      <input type="password" class="form-control" id="inputPassword3" placeholder="Password">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                      <div class="checkbox">
+                        <label>
+                          <input type="checkbox"> Remember me
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                      <button type="submit" class="btn btn-default">Sign in</button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
       </script>
-    </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
   </body>
 </html>
