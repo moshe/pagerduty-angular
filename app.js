@@ -31,8 +31,9 @@ function ListCtrl($scope, $location, Restangular) {
   $scope.incidents = Restangular.all("incidents").getList({sort_by: "created_on:desc"}).$object;
   $scope.itemsPerPage = 100;
   $scope.currentPage = 0;
+  $scope.pagesToFetch = 10;
 
-  $scope.update = function(pages, base, token) {
+  $scope.update = function(pages) {
     for (i = 0; i < pages; i++) {
       Restangular.all("incidents").getList({offset:100 * i, sort_by: "created_on:desc"})
         .then(function(result) {
@@ -41,7 +42,7 @@ function ListCtrl($scope, $location, Restangular) {
     }
   };
 
-  $scope.update(10);
+  $scope.update($scope.pagesToFetch);
 
   $scope.byState = function(entry) {
   return entry.status === $scope.selectedState || $scope.selectedState === undefined;
