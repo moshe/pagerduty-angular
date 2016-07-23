@@ -2,16 +2,16 @@ var app = angular.module('incidents', ['restangular', 'ngRoute']).
   config(function($routeProvider, RestangularProvider) {
     $routeProvider.
       when('/', {
-        controller:ListCtrl, 
+        controller:ListCtrl,
         templateUrl:'list.html'
       }).
       otherwise({redirectTo:'/'});
-
+      console.log($.cookie('organization'))
       // Set base url
-      RestangularProvider.setBaseUrl('https://<orgName>.pagerduty.com/api/v1');
+      RestangularProvider.setBaseUrl('https://' + $.cookie('organization') + '.pagerduty.com/api/v1');
 
       // auth details
-      RestangularProvider.setDefaultHeaders({Authorization: 'Token token=<Token>'});
+      RestangularProvider.setDefaultHeaders({Authorization: 'Token token=' + $.cookie('token')});
 
       // Date extractor
       RestangularProvider.setResponseExtractor(function(response, operation) {
@@ -29,11 +29,12 @@ app.filter('offset', function() {
 function ListCtrl($scope, $location, Restangular) {
   $scope.states = ["acknowledged","triggered","resolved"];
   $scope.incidents = Restangular.all("incidents").getList({sort_by: "created_on:desc"}).$object;
-  $scope.itemsPerPage = 100;
+  $scope.itemsPerPage = $.cookie('itemsPerPage') || 100;
   $scope.currentPage = 0;
-  $scope.pagesToFetch = 10;
+  $scope.pagesToFetch = $.cookie('pagesToFetch') || 10;
 
   $scope.update = function(pages) {
+    $scope.organization = $.cookie('organization')
     for (i = 0; i < pages; i++) {
       Restangular.all("incidents").getList({offset:100 * i, sort_by: "created_on:desc"})
         .then(function(result) {
@@ -43,6 +44,15 @@ function ListCtrl($scope, $location, Restangular) {
   };
 
   $scope.update($scope.pagesToFetch);
+
+  $scope.updateSettings = function(settings) {
+    _.forEach(settings, function(v, k) {
+      console.log('settings: ', k, v)
+      $.cookie(k, v);
+      $scope[k] = v
+      location.reload();
+    })
+  };
 
   $scope.byState = function(entry) {
   return entry.status === $scope.selectedState || $scope.selectedState === undefined;

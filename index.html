@@ -52,7 +52,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr ng-repeat="incident in incidents | filter:search | filter:byState | offset: currentPage*itemsPerPage | limitTo: itemsPerPage | orderBy:'-incident_number'" ng-show="incident.incident_number" 
+                  <tr ng-repeat="incident in incidents | filter:search | filter:byState | offset: currentPage*itemsPerPage | limitTo: itemsPerPage | orderBy:'-incident_number'" ng-show="incident.incident_number"
                     ng-class="{'danger': incident.status === 'triggered', 'success': incident.status === 'resolved', 'warning': incident.status === 'acknowledged'}">
                     <td><a href="{{incident.html_url}}" target="_blank">{{incident.incident_number}}</a></td>
                     <td>{{incident.created_on}}</td>
@@ -79,23 +79,24 @@
             </div>
             <!-- Modal -->
             <div class="modal fade" id="settings" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-              <div class="col-sm-4 col-sm-offset-4 text-center">
+              <div class="col-sm-6 col-sm-offset-4 text-center">
                 <h1>Settings</h1>
                 <form class="form-horizontal" role="form">
                   <div class="form-group">
-                    <label for="input_no_pages" class="col-sm-2 control-label">Pages incidents</label>
+                    <label for="input_no_pages" class="col-sm-2 control-label">Page settings</label>
                     <div class="col-sm-9">
-                      <input type="text" class="form-control" ng-model="pagesToFetch" ng-model-options="{ updateOn: 'blur' }" placeholder="Number of pages to fetch ({{pagesToFetch}})" >
-                      <input type="text" class="form-control" ng-model="itemsPerPage" ng-model-options="{ updateOn: 'blur' }" placeholder="Number of incidents per pager ({{itemsPerPage}})" >
+                      <input type="text" class="form-control" ng-model="settings.pagesToFetch" ng-model-options="{ updateOn: 'blur' }" placeholder="Number of pages to fetch ({{pagesToFetch}})" >
+                      <input type="text" class="form-control" ng-model="settings.itemsPerPage" ng-model-options="{ updateOn: 'blur' }" placeholder="Number of incidents per pager ({{itemsPerPage}})" >
                     </div>
                   </div>
                   <div class="form-group">
                     <label for="inputPassword3" class="col-sm-2 control-label">Authentication</label>
                     <div class="col-sm-9">
-                      <input type="text" class="form-control" ng-model="no_pages" placeholder="Organization" >
-                      <input type="text" class="form-control" ng-model="no_pages" placeholder="Token" >
+                      <input type="text" class="form-control" ng-model="settings.organization" placeholder="Organization ({{organization}})" >
+                      <input type="text" class="form-control" ng-model="settings.token" placeholder="Token (********)" >
                     </div>
                   </div>
+                  <button ng-click="updateSettings(settings)">RESET</button>
                 </form>
               </div>
             </div>
@@ -103,6 +104,7 @@
         </div>
       </script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
   </body>
