@@ -6,7 +6,7 @@ var app = angular.module('incidents', ['restangular', 'ngRoute']).
         templateUrl:'list.html'
       }).
       otherwise({redirectTo:'/'});
-      console.log($.cookie('organization'))
+
       // Set base url
       RestangularProvider.setBaseUrl('https://' + $.cookie('organization') + '.pagerduty.com/api/v1');
 
@@ -47,7 +47,6 @@ function ListCtrl($scope, $location, Restangular) {
 
   $scope.updateSettings = function(settings) {
     _.forEach(settings, function(v, k) {
-      console.log('settings: ', k, v)
       $.cookie(k, v);
       $scope[k] = v
       location.reload();
