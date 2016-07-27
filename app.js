@@ -14,7 +14,7 @@ var app = angular.module('incidents', ['restangular', 'ngRoute']).
       RestangularProvider.setBaseUrl('https://api.pagerduty.com');
 
       // Request headers
-      RestangularProvider.setDefaultHeaders({Authorization: 'Token token=' + apiKey},{Accept: 'application/vnd.pagerduty+json;version=2'});
+      RestangularProvider.setDefaultHeaders({Authorization: 'Token token=' + $.cookie('token')},{Accept: 'application/vnd.pagerduty+json;version=2'});
 
       // Date extractor
       RestangularProvider.setResponseExtractor(function(response, operation) {
@@ -34,18 +34,26 @@ function ListCtrl($scope, $location, Restangular) {
   $scope.incidents = Restangular.all("incidents").getList({sort_by: "created_at:desc"}).$object;
   $scope.itemsPerPage = 100;
   $scope.currentPage = 0;
-  $scope.pagesToFetch = 10;
+  $scope.pagesToFetch = $.cookie('pagesToFetch') || 10;
 
   $scope.update = function(pages) {
     for (i = 0; i < pages; i++) {
       Restangular.all("incidents").getList({offset:100 * i, sort_by: "created_at:desc"})
         .then(function(result) {
-        Array.prototype.push.apply($scope.incidents,result);
+        Array.prototype.push.apply($scope.incidents, result);
         })
     }
   };
 
   $scope.update($scope.pagesToFetch);
+
+  $scope.updateSettings = function(settings) {
+    _.forEach(settings, function(v, k) {
+      $.cookie(k, v);
+      $scope[k] = v
+      location.reload();
+    })
+  };
 
   $scope.byState = function(entry) {
   return entry.status === $scope.selectedState || $scope.selectedState === undefined;
