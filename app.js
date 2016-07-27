@@ -1,6 +1,3 @@
-// Enter a valid PagerDuty v2 REST API token
-var apiKey = 'ENTER_YOUR_API_KEY_HERE';
-
 var app = angular.module('incidents', ['restangular', 'ngRoute']).
   config(function($routeProvider, RestangularProvider) {
     $routeProvider.
