@@ -37,11 +37,10 @@ function ListCtrl($scope, $location, Restangular) {
   $scope.pagesToFetch = $.cookie('pagesToFetch') || 10;
 
   $scope.update = function(pages) {
-    $scope.organization = $.cookie('organization')
     for (i = 0; i < pages; i++) {
       Restangular.all("incidents").getList({offset:100 * i, sort_by: "created_at:desc"})
         .then(function(result) {
-        Array.prototype.push.apply($scope.incidents,result);
+        Array.prototype.push.apply($scope.incidents, result);
         })
     }
   };
