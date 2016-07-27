@@ -1,3 +1,6 @@
+// Enter a valid PagerDuty v2 REST API token
+var apiKey = 'ENTER_YOUR_API_KEY_HERE';
+
 var app = angular.module('incidents', ['restangular', 'ngRoute']).
   config(function($routeProvider, RestangularProvider) {
     $routeProvider.
@@ -8,10 +11,10 @@ var app = angular.module('incidents', ['restangular', 'ngRoute']).
       otherwise({redirectTo:'/'});
 
       // Set base url
-      RestangularProvider.setBaseUrl('https://' + $.cookie('organization') + '.pagerduty.com/api/v1');
+      RestangularProvider.setBaseUrl('https://api.pagerduty.com');
 
-      // auth details
-      RestangularProvider.setDefaultHeaders({Authorization: 'Token token=' + $.cookie('token')});
+      // Request headers
+      RestangularProvider.setDefaultHeaders({Authorization: 'Token token=' + $.cookie('token')},{Accept: 'application/vnd.pagerduty+json;version=2'});
 
       // Date extractor
       RestangularProvider.setResponseExtractor(function(response, operation) {
@@ -28,15 +31,15 @@ app.filter('offset', function() {
 
 function ListCtrl($scope, $location, Restangular) {
   $scope.states = ["acknowledged","triggered","resolved"];
-  $scope.incidents = Restangular.all("incidents").getList({sort_by: "created_on:desc"}).$object;
-  $scope.itemsPerPage = $.cookie('itemsPerPage') || 100;
+  $scope.incidents = Restangular.all("incidents").getList({sort_by: "created_at:desc"}).$object;
+  $scope.itemsPerPage = 100;
   $scope.currentPage = 0;
   $scope.pagesToFetch = $.cookie('pagesToFetch') || 10;
 
   $scope.update = function(pages) {
     $scope.organization = $.cookie('organization')
     for (i = 0; i < pages; i++) {
-      Restangular.all("incidents").getList({offset:100 * i, sort_by: "created_on:desc"})
+      Restangular.all("incidents").getList({offset:100 * i, sort_by: "created_at:desc"})
         .then(function(result) {
         Array.prototype.push.apply($scope.incidents,result);
         })
