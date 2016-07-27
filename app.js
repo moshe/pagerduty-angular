@@ -46,7 +46,9 @@ function ListCtrl($scope, $location, Restangular) {
   };
 
   $scope.update($scope.pagesToFetch);
-
+  $scope.fromNow = function(date)  {
+    return moment(date).fromNow();
+  }
   $scope.updateSettings = function(settings) {
     _.forEach(settings, function(v, k) {
       $.cookie(k, v);
