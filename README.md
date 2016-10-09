@@ -10,7 +10,7 @@ Angular 1 wrapper for PagerDuty incidents with the ability to search and filter
 4. NO MORE CTRL+F !!
 
 #Hosted on github pages
-1. Visit [PagerDuty incidents viewer](http://moshezada.github.io/pagerduty-angular/#/)
+1. Visit [PagerDuty incidents viewer](http://moshe.github.io/pagerduty-angular/#/)
 2. [Get v2 access token from PagerDuty](https://support.pagerduty.com/hc/en-us/articles/202829310-Generating-an-API-Key)
 3. Press the settings button (top right) and add your token
 
